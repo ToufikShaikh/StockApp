@@ -22,14 +22,23 @@ pipeline {
 				}
 			}
 		}
-		stage('Deploy stage') {
+		stage('Docker') {
+			steps {
+				bat 'docker stop stockcontainer || true'
+				bat 'docker rm stockcontainer || true'
+				bat 'docker rmi stockapp || true'
+				bat 'docker build -t stockapp .'
+				bat 'docker run -d -p 9999:9090 --name stockcontainer stockapp'
+			}
+		}
+		/*stage('Deploy stage') {
 			steps {
 				dir("StockPricesApp/target") {
 					withEnv(['JENKINS_NODE_COOKIE=DontKillMe']) {
-						bat 'start java -Dserver.port=3000 -jar TransferFundsApp-0.0.1-SNAPSHOT.jar'
+						bat 'start java -Dserver.port=3000 -jar StockPricesApp-0.0.1-SNAPSHOT.jar'
 					}
 				}
 			}
-		}
+		}*/
 	}
 }

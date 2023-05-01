@@ -1,34 +1,54 @@
 pipeline {
 	agent any
 	stages {
-		stage('Clean stage') {
-			steps {
-				dir("StockPricesApp") {
-					bat 'mvn clean'
-				}
-			}
-		}
-		stage('Compile stage') {
-			steps {
-				dir("StockPricesApp") {
-					bat 'mvn compile'
-				}
-			}
-		}
 		stage('Install stage') {
 			steps {
 				dir("StockPricesApp") {
-					bat 'mvn install'
+					bat 'mvn clean install'
 				}
 			}
 		}
-		stage('Docker') {
+		stage('Stop Docker container if running') {
 			steps {
-				bat 'docker stop happy_hoover || echo no container running'
-				bat 'docker rm happy_hoover || echo no container found'
-				bat 'docker rmi stockapp || echo no image found'
-				bat 'docker build -t toufiks/stockapp .'
-				bat 'docker run -d -p 9999:9090 toufiks/stockapp'
+				script {
+					if (docker.containerExists(stockcontainer)) {
+						docker.stop(stockcontainer)
+					}else{
+						println("Docker container does not exist")
+					}
+				}
+			}
+		}
+		stage('Delete Docker image if exists') {
+			steps {
+				script {
+					if (docker.imageExists(stockapp)) {
+						docker.image(stockapp).remove()
+					}else{
+						println("Docker image does not exist")
+					}
+				}
+			}
+		}
+		stage('Build Docker image') {
+			steps {
+				script {
+					docker.build(stockapp, '.')
+				}
+			}
+		}
+		
+		stage('Run Docker container') {
+			steps {
+				script {
+					docker.run(
+						stockapp,
+						name: stockcontainer,
+						rm: true,
+						detach: true,
+						ports: '9999:9090'
+					)
+				}
 			}
 		}
 		/*stage('Deploy stage') {

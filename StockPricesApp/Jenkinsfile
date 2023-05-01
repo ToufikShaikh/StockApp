@@ -27,8 +27,8 @@ pipeline {
 				bat 'docker stop happy_hoover || echo no container running'
 				bat 'docker rm happy_hoover || echo no container found'
 				bat 'docker rmi stockapp || echo no image found'
-				bat 'docker build -t stockapp .'
-				bat 'docker run -d -p 9999:9090 --name happy_hoover stockapp'
+				bat 'docker build -t toufiks/stockapp .'
+				bat 'docker run -d -p 9999:9090 toufiks/stockapp'
 			}
 		}
 		/*stage('Deploy stage') {

@@ -8,49 +8,13 @@ pipeline {
 				}
 			}
 		}
-		stage('Stop Docker container if running') {
+		stage('Docker') {
 			steps {
-				script {
-					if (docker.containerExists(stockcontainer)) {
-						docker.stop(stockcontainer)
-					}else{
-						println("Docker container does not exist")
-					}
-				}
-			}
-		}
-		stage('Delete Docker image if exists') {
-			steps {
-				script {
-					if (docker.imageExists(stockapp)) {
-						docker.image(stockapp).remove()
-					}else{
-						println("Docker image does not exist")
-					}
-				}
-			}
-		}
-		stage('Build Docker image') {
-			steps {
-				script {
-					docker.build(stockapp, '.')
-				}
-			}
-		}
-		
-		stage('Run Docker container') {
-			steps {
-				script {
-					docker.run(
-						stockapp,
-						name: stockcontainer,
-						rm: true,
-						detach: true,
-						ports: '9999:9090'
-					)
-				}
-			}
-		}
+				bat 'docker build -t toufiks/stockapp .'	
+				bat 'docker run -d -p 9999:9090 --name stockapp_container toufiks/stockapp'
+}
+}
+}
 		/*stage('Deploy stage') {
 			steps {
 				dir("StockPricesApp/target") {

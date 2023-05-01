@@ -24,11 +24,11 @@ pipeline {
 		}
 		stage('Docker') {
 			steps {
-				bat 'docker stop stockcontainer || true'
-				bat 'docker rm stockcontainer || true'
-				bat 'docker rmi stockapp || true'
+				bat 'docker stop happy_hoover || echo no container running'
+				bat 'docker rm happy_hoover || echo no container found'
+				bat 'docker rmi stockapp || echo no image found'
 				bat 'docker build -t stockapp .'
-				bat 'docker run -d -p 9999:9090 --name stockcontainer stockapp'
+				bat 'docker run -d -p 9999:9090 --name happy_hoover stockapp'
 			}
 		}
 		/*stage('Deploy stage') {

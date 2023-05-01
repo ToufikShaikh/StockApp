@@ -12,9 +12,8 @@ pipeline {
 			steps {
 				bat 'docker build -t toufiks/stockapp .'	
 				bat 'docker run -d -p 9999:9090 --name stockapp_container toufiks/stockapp'
-}
-}
-}
+			}
+		}
 		/*stage('Deploy stage') {
 			steps {
 				dir("StockPricesApp/target") {
